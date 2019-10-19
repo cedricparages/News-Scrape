@@ -1,44 +1,71 @@
-// Dependencies
+/* Showing Mongoose's "Populated" Method
+* =============================================== */
+
 var express = require('express');
+var exphbs = require('express-handlebars');
 var bodyParser = require('body-parser');
-var logger = require('morgan');
 var mongoose = require('mongoose');
 
-var Note = require('./models/Note.js');
-var Article = require('./models/Article.js')
+var logger = require('morgan'); // for debugging
+var request = require('request'); // for web-scraping
+var cheerio = require('cheerio'); // for web-scraping
 
-var request = require('request');
-var cheerio = require('cheerio');
-mongoose.Promise = Promise;
 
-var PORT = process.env.PORT || 3000;
-
+// Initialize Express for debugging & body parsing
 var app = express();
-
-app.use(logger("dev"));
+app.use(logger('dev'));
 app.use(bodyParser.urlencoded({
   extended: false
-}));
+}))
 
-app.use(express.static("public"));
-var exphbs = require('express-handlebars');
-app.engine('handlebars', exphbs({defaultLayout: "main"}));
+// Serve Static Content
+app.use(express.static(process.cwd() + '/public'));
+
+// Express-Handlebars
+app.engine('handlebars', exphbs({defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
 
-var routes = require("./controllers/controller.js");
-app.use("/", routes);
-mongoose.connect("mongodb://heroku_gnzk5747:4d2121nhgnfbdl1pfirsdepk9n@ds125262.mlab.com:25262/heroku_gnzk5747");
-//mongoose.connect('mongodb://localhost/model-news-scraper');
+
+// Database Configuration with Mongoose
+// ---------------------------------------------------------------------------------------------------------------
+// Connect to localhost if not a production environment
+if(process.env.NODE_ENV == 'production'){
+  mongoose.connect('mongodb://heroku_58c6l923:2gecc0p46jq110h6lke7elc7vb@ds115214.mlab.com:15214/heroku_58c6l923');
+}
+else{
+  mongoose.connect('mongodb://localhost/WebScraper');
+  // YOU CAN IGNORE THE CONNECTION URL BELOW (LINE 41) THAT WAS JUST FOR DELETING STUFF ON A RE-DEPLOYMENT
+  //mongoose.connect('mongodb://heroku_58c6l923:2gecc0p46jq110h6lke7elc7vb@ds115214.mlab.com:15214/heroku_58c6l923');
+}
 var db = mongoose.connection;
 
-db.on("error", function(error) {
-  console.log("Mongoose Error: ", error);
+// Show any Mongoose errors
+db.on('error', function(err) {
+  console.log('Mongoose Error: ', err);
 });
 
-db.once("open", function() {
-  console.log("Mongoose connection successful.");
+// Once logged in to the db through mongoose, log a success message
+db.once('open', function() {
+  console.log('Mongoose connection successful.');
 });
 
-app.listen(PORT, function() {
-  console.log("App running on PORT " + PORT);
+// Import the Comment and Article models
+var Comment = require('./models/Note.js');
+var Article = require('./models/Article.js');
+// ---------------------------------------------------------------------------------------------------------------
+
+// DROP DATABASE (FOR MY PERSONAL REFERENCE ONLY - YOU CAN IGNORE)
+// Article.remove({}, function(err) { 
+//    console.log('collection removed') 
+// });
+
+// Import Routes/Controller
+var router = require('./controllers/controller.js');
+app.use('/', router);
+
+
+// Launch App
+var port = process.env.PORT || 3000;
+app.listen(port, function(){
+  console.log('Running on port: ' + port);
 });

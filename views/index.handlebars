@@ -1,60 +1,105 @@
+{{#each articles}}
+  <ul class="collapsible" data-collapsible="accordion">
 
-<nav class="navbar navbar-default">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-        <span class="sr-only"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="#">All News Fit To Scrape</a>
-    </div>
-
-    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-      <ul class="nav navbar-nav">
-        <li class="active"><a href="/">Home <span class="sr-only">(current)</span></a></li>
-        <li><a href="/save">Saved Articles</a></li>
-      </ul>
-      <form action="/scrape" method="POST" class="navbar-form navbar-left">
-        <button type="submit" class="btn btn-default">Scrape Scrape Scrape</button>
-      </form>
-    </div>
-  </div>
-</nav>
-
-<div class="container">
-  <div class="row">
-    <div class="col-md-12">
-      <div class="jumbotron">
+    <!-- Article Drop Down -->
+    <li>
+      <div style="background-color: white;" class="collapsible-header blue lighten-2">
+        <i class="material-icons">language</i> <b>{{updated}}</b>
+        <div style="clear: left; line-height: 110%; padding-bottom: 10px;"><b>{{title}}</b></div>
       </div>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-md-12">
-      {{#each articles}}
-        <div class="panel panel-primary">
-          <div class="panel-heading row">
-            <div class="col-xs-9">
-              <h3 class="panel-title pull-left">{{this.title}}</h3>
-            </div>
-            <div class="col-xs-3">
-              <form action="/save" method="POST">
-                <input id="article-title" type="hidden" name="title" value="{{this.title}}">
-                <input id="article-link" type="hidden" name="link" value={{this.link}}>
-                <button type="submit" class="btn btn-default pull-right">Save This Article</button>
-              </form>
+      <div class="collapsible-body" style="background-color: white;">
+        <p>
+          {{summary}}
+
+          <br><br>
+
+          <i>Please read the full article <a href="{{link}}" target="_new">here</a>.</i>
+        </p>
+          
+      </div>
+    </li>
+
+
+    <!-- Add Comments Drop Down -->
+    <li>
+      <div class="collapsible-header"><i class="material-icons">comment</i>Add a Note</div>
+      <div class="collapsible-body" style="background-color: white;">
+
+        <form id="form-add-{{_id}}" action="add/note/{{_id}}" method="post" style="background-color: white;">
+
+          <!-- Author Name Input -->
+          <div class="row">
+            <div class="input-field col s2"></div>
+            <div class="input-field col s8">
+              <input id="author_name" name="name" type="text" class="validate">
+              <label for="author_name">Your Name:</label>
             </div>
           </div>
+          
+          <!-- Note Input -->
           <div class="row">
-            <div class="col-xs-12>">
-              <div class="panel-body">
-                <p>{{this.link}}</p>
+            <div class="input-field col s2"></div>
+            <div class="input-field col s8">
+              <textarea id="note_box" name="note" class="materialize-textarea"></textarea>
+              <label for="note_box">Your Reaction:</label>
+            </div>
+          </div>
+
+            <!-- Submit Button -->
+            <div class="row">
+              <div class="input-field col s2"></div>
+              <div class="input-field col s8">
+              <center><input class="btn add-note-button" data-id="{{_id}}" type="submit" value="Submit"></center>
               </div>
             </div>
-          </div>
-        </div>
-      {{/each}}
-    </div>
-  </div>
-</div>
+          
+        </form>
+
+      </div>
+    </li>
+
+
+    <!-- View Comments Drop Down -->
+    <li>
+      <div class="collapsible-header"><i class="material-icons">thumbs_up_down</i>View Notes</div>
+      <div class="collapsible-body" style="background-color: white;">
+      
+        {{!-- Check if the article has notes --}}
+        {{#if notes}}
+
+          {{!-- Article has notes so iterate over them  --}}
+          <ul class="collection">
+            {{#each notes}}
+            
+              <li class="collection-item">
+
+                {{!-- Add Author Name --}}
+                <b>{{author}}</b> 
+
+                {{!-- Add a Delete Button --}}
+                <span class="badge">
+                  <form id="form-delete-{{_id}}" action="remove/comment/{{_id}}" method="post">
+                    <input class="btn-small delete-note-button" data-id="{{_id}}" type="submit" value="Delete" style="color: white; background-color: red; border-color: red;">
+                  </form>
+                </span>
+
+                <br>
+
+                {{!-- Add the Content of the Comment --}}
+                {{content}}
+
+              </li> 
+            {{/each}}
+          </ul>
+        
+        {{!-- No notes, so display message --}}
+        {{else}}
+          <p>No Notes Yet :( </p>
+        {{/if}}
+            
+        
+      </div>
+    </li>
+
+  </ul>
+{{/each}}
