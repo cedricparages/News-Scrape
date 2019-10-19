@@ -26,7 +26,7 @@ app.set('view engine', 'handlebars');
 // Database Configuration with Mongoose
 // ---------------------------------------------------------------------------------------------------------------
 if(process.env.NODE_ENV == 'production'){
-  mongoose.connect('mongodb://heroku_58c6l923:2gecc0p46jq110h6lke7elc7vb@ds115214.mlab.com:15214/heroku_58c6l923');
+  mongoose.connect('mongodb://cedd:scraper1@ds149124.mlab.com:49124/heroku_51dmkl4d');
 }
 else{
   mongoose.connect('mongodb://localhost/WebScraper');
