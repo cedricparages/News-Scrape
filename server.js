@@ -1,14 +1,11 @@
-/* Showing Mongoose's "Populated" Method
-* =============================================== */
-
 var express = require('express');
 var exphbs = require('express-handlebars');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 
-var logger = require('morgan'); // for debugging
-var request = require('request'); // for web-scraping
-var cheerio = require('cheerio'); // for web-scraping
+var logger = require('morgan'); 
+var request = require('request'); 
+var cheerio = require('cheerio'); 
 
 
 // Initialize Express for debugging & body parsing
@@ -28,7 +25,6 @@ app.set('view engine', 'handlebars');
 
 // Database Configuration with Mongoose
 // ---------------------------------------------------------------------------------------------------------------
-// Connect to localhost if not a production environment
 if(process.env.NODE_ENV == 'production'){
   mongoose.connect('mongodb://heroku_58c6l923:2gecc0p46jq110h6lke7elc7vb@ds115214.mlab.com:15214/heroku_58c6l923');
 }
